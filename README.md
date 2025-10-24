@@ -1,29 +1,14 @@
-# frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Utilisation :
 
-## Recommended IDE Setup
+  - Lancer le server avec node (>node server.js) (https://github.com/Gauthier_det/culturegoat_back)
+  - Lancer le client avec vue (>npm run dev) sur le répertoire frontend 
+    
+Git :
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+  - Les tickets prioritaires à traiter sont dans la colonne Ready du Github project
+  - Pour chaque nouvelle feature, aller sur un branche features/ma-feature
+  - Quand une feature est terminée, merge sur la branche release/version-en-cours
+  - La montée de version se fait uniquement par @gauthyeh quand les issues d'une même prioritée sont validées
+  
+Le projet sera déployé sur un hébergeur en version 1.1 !
