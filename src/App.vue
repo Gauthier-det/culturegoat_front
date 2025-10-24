@@ -1,6 +1,6 @@
 <script>
 import Home from "./views/Home.vue";
-import Game from "./views/Game.vue";
+import Game from "./views/game.vue";
 
 export default {
   components: {
