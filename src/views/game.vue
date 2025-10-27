@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, onBeforeRouteLeave, useRouter } from "vue-router";
 import socket from "@/socket";
+import { normalizeWord, isCloseMatch } from "@/tools.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -40,10 +41,6 @@ onMounted(() => {
     options.value = q.options;
     timeLeft.value = q.time;
     type.value = q.type;
-    console.log("question reçue : " , currentQuestion.value);
-    console.log("options reçues : " , options.value);
-    console.log("Réponse reçue : " , q.response);
-    console.log("type de question : " , type.value);
     answered.value = false;
     clickedOption.value = null;
     startTimer();
@@ -63,13 +60,18 @@ onMounted(() => {
 
 // Envoi de la réponse du joueur
 function sendAnswer(answer) {
+  let opt_regex = [];
+  for (let i = 0; i < options.value.length; i++) {
+      opt_regex.push(normalizeWord(options.value[i]));
+  }
+  answer = normalizeWord(answer);
   if(type.value === 'qcm'){
     clickedOption.value = answer;
-    console.log("Option cliquée :", clickedOption.value);
+    //console.log("Option cliquée :", clickedOption.value);
     answered.value = true;
   }
   else{
-    if(options.value.includes(answer)){
+    if(isCloseMatch(answer, opt_regex)){
       answered.value = true;
       answer = "1";
     }
@@ -97,6 +99,10 @@ function backToMenu(){
   router.push(`/`);
 }
 
+
+
+
+
 </script>
 
 <template>
@@ -115,7 +121,7 @@ function backToMenu(){
       </div>
       <div class="openQuest" v-else-if="type === 'open'">
         <div class="game-options">
-          <input type="text" v-model="clickedOption" :disabled="answered" placeholder="Votre réponse" />
+          <input type="text" v-model="clickedOption" :disabled="answered" placeholder="Votre réponse" @keyup.enter="sendAnswer(clickedOption)" />
           <button @click="sendAnswer(clickedOption)" :disabled="answered || !clickedOption">Valider</button>
         </div>
       </div>

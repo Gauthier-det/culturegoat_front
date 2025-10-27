@@ -8,29 +8,38 @@ const route = useRoute();
 const router = useRouter();
 const roomId = route.params.roomId;
 const pseudo = sessionStorage.getItem("pseudo");
-const isHost = sessionStorage.getItem("isHost");
+const isHost = sessionStorage.getItem("isHost")==="true";
 const players = ref({});
 const rules = ref({});
 const showRulesParam = ref(false);
 
 socket.emit("joinRoom", { roomId, playerName: pseudo });
 
-socket.on("updatePlayers", (room) => {
+socket.on("updatePlayers", (room, newHostId) => {
   players.value = room.players;
+  if (newHostId && socket.id === newHostId) {
+    sessionStorage.setItem("isHost", true);
+    isHost = true;
+  }
 });
 
 function startGame() {
-    if (!rules.value || Object.keys(rules.value).length === 0) {
+  console.log(rules.value);
+  if (!rules.value || Object.keys(rules.value).length === 0) {
     rules.value = {
-      rules: "FixedQuestions",
-      scoreMax: 5,
+      rulesOption: "FixedQuestions",
+      scoreMax: 0,
       questionMax: 5,
       qcmTimeLimit: 8,
       openTimeLimit: 12,
     };
   }
-    console.log("Règles de la partie : ", rules.value);
-    socket.emit("prepareGame", { roomId });
+  try {
+    socket.emit("prepareGame", { roomId, rules: rules.value });
+  } catch (error) {
+    console.error("Erreur lors de la préparation de la partie :", error);
+    alert("Une erreur est survenue lors de la préparation de la partie. Veuillez réessayer.");
+  }
 }
 
 socket.on("gameStarting", () => {
@@ -38,8 +47,9 @@ socket.on("gameStarting", () => {
 });
 
 function updateRules(newRules) {
+  //console.log("Nouvelles règles reçues :", newRules);
   showRulesParam.value = false;
-  rules.value = newRules;   
+  rules.value = newRules;  
 }
 
 </script>

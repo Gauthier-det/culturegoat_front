@@ -13,12 +13,18 @@ if(sessionStorage.getItem("pseudo") != null){
 
 function createRoom() {
   let id = Math.random().toString(36).substr(2, 4);
+  if(pseudo.value.trim() === ""){
+    pseudo.value = "Jeune Goat "+Math.floor(Math.random()*1000);
+  }
   sessionStorage.setItem("pseudo", pseudo.value);
   sessionStorage.setItem("isHost", true);
   router.push(`/room/${id}`);
 }
 
 function joinRoom() {
+  if(pseudo.value.trim() === ""){
+    pseudo.value = "Jeune Goat "+Math.floor(Math.random()*1000);
+  }
   sessionStorage.setItem("pseudo", pseudo.value);
   sessionStorage.setItem("isHost", false);
   router.push(`/room/${roomId.value}`);
