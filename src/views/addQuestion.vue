@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import socket from "@/socket";
 
@@ -26,16 +26,43 @@ onMounted(() => {
   });
 });
 
+watch(selectedType, (newType) => {
+  if (!newType) return;
+
+  if (newType.label === "qcm") {
+    const firstFour = options.value.slice(0, 4).map(v => v || ""); 
+    while (firstFour.length < 4) firstFour.push(""); 
+    options.value = firstFour;
+
+    if (!options.value.includes(response.value)) response.value = "";
+  }
+
+  if (newType.label === "open") {
+    const cleaned = options.value.map(v => v || "").filter(v => v.trim() !== "");
+    options.value = cleaned.length ? cleaned : [""];
+    response.value = "1"; 
+  }
+});
+
 function addOption() {
-  options.value.push("");
+  if (selectedType.value && selectedType.value.label === "open") {
+    options.value.push("");
+  }
 }
 function removeOption(index) {
   options.value.splice(index, 1);
+  if (selectedType.value && selectedType.value.label === "open" && options.value.length === 0) {
+    options.value.push("");
+  }
 }
 
 function sendQuestion() {
   if (!questionText.value || !selectedType.value || !selectedTopic.value) {
     error.value = "Veuillez remplir tous les champs obligatoires.";
+    return;
+  }
+  if (!selectedType == "Choisir un type" ) {
+    error.value = "Veuillez sélectionner un type de question.";
     return;
   }
 
@@ -47,6 +74,16 @@ function sendQuestion() {
     if (!response.value) {
       error.value = "Veuillez indiquer la bonne réponse.";
       return;
+    }
+    if(options.value.length != 4){
+        error.value = "Veuillez entrer le bon nombre de réponses"
+        return;
+    }
+    for (let opt of options.value) {
+      if (!opt || opt.trim() === "") {
+        error.value = "Veuillez remplir toutes les options.";
+        return;
+      }
     }
   } else if (selectedType.value.label === "open") {
     response.value = "1";
@@ -98,7 +135,7 @@ function sendQuestion() {
 
       <div>
         <label class="block font-semibold">Description (facultatif) :</label>
-        <textarea v-model="desc" class="w-full border rounded p-2" />
+        <textarea v-model="desc" class="w-full border rounded p-2"/>
       </div>
 
       <div>
