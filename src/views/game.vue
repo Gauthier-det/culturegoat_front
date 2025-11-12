@@ -116,7 +116,7 @@ function backToMenu(){
   <div>
     <h1>Partie - Room {{ roomId }}</h1>
 
-    <div v-if="timeLeft <= 4">
+    <div v-if="timeLeft <= 4 && !gameOver">
       <h2 v-if="type == 'qcm'">{{ response }}</h2>
       <h2 v-else>La réponse était : {{ options[0] }}</h2>
       <p v-if="desc"><em>{{ desc }}</em></p>
