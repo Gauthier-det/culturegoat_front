@@ -16,8 +16,11 @@ const imageLink = ref("");
 const options = ref(["", "", "", ""]); 
 const response = ref("");
 const error = ref("");
+const connected = ref(false);
+const createurPassword = ref("");
 
 onMounted(() => {
+  checkAuth();
   socket.emit("getTopicsAndTypes");
   socket.on("topicsAndTypes", (data) => {
     topics.value = data.topics || [];
@@ -66,17 +69,53 @@ function sendQuestion() {
 
   socket.emit("addQuestion", questionData, (res) => {
     if (res?.success) {
-      router.push("/add-question");
       alert("Question ajoutée avec succès !");
+      selectedTopic.value = "";
+      selectedType.value = "";
+      questionText.value = "";
+      desc.value = "";
+      imageLink.value = "";
+      options.value = ["", "", "", ""];
+      response.value = "";
     } else {
       alert("Erreur lors de l'ajout de la question.");
     }
   });
 }
+
+function checkAuth(){
+  if(localStorage.getItem("creaValue")){
+    if(localStorage.getItem("creaValue") === "1"){
+      connected.value = true;
+      return;
+    }
+  }
+  if(createurPassword.value === ""){
+    return;
+  }
+  if(createurPassword.value === "Bouteille123"){
+    localStorage.setItem("creaValue", "1");
+    connected.value = true;
+  } else {
+    alert("Mot de passe incorrect");
+  }
+}
+
 </script>
 
 <template>
-  <div class="p-6 max-w-xl mx-auto">
+  <div class="p-6" v-if="!connected">
+    <form @submit.prevent="checkAuth">
+      <h2 class="text-xl font-bold mb-4">🔐 Authentification créateur de question</h2>
+      <div class="mb-4">
+        <label for="createurPassword" class="block text-gray-700 mb-2">Mot de passe :</label>
+        <input type="password" id="createurPassword" v-model="createurPassword" class="w-full p-2 border rounded" required />
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Se connecter</button>
+    </form>
+  </div>
+
+  <div class="p-6 max-w-xl mx-auto" v-if="connected">
     <h1 class="text-2xl font-bold mb-4">Ajouter une question</h1>
 
     <div v-if="loading" class="text-gray-500">Chargement des topics...</div>
