@@ -18,6 +18,7 @@ const response = ref("");
 const error = ref("");
 const connected = ref(false);
 const createurPassword = ref("");
+const CREATE_PASS = import.meta.env.VITE_CREATE_PASS;
 
 onMounted(() => {
   checkAuth();
@@ -121,8 +122,8 @@ function sendQuestion() {
 }
 
 function checkAuth(){
-  if(localStorage.getItem("creaValue")){
-    if(localStorage.getItem("creaValue") === "1"){
+  if(sessionStorage.getItem("creaValue")){
+    if(sessionStorage.getItem("creaValue") === "1"){
       connected.value = true;
       return;
     }
@@ -130,8 +131,8 @@ function checkAuth(){
   if(createurPassword.value === ""){
     return;
   }
-  if(createurPassword.value === "Bouteille123"){
-    localStorage.setItem("creaValue", "1");
+  if(createurPassword.value === CREATE_PASS){
+    sessionStorage.setItem("creaValue", "1");
     connected.value = true;
   } else {
     alert("Mot de passe incorrect");
@@ -142,11 +143,13 @@ function checkAuth(){
 
 <template>
   <div class="p-6" v-if="!connected">
+
     <form @submit.prevent="checkAuth">
       <h2 class="text-xl font-bold mb-4">🔐 Authentification créateur de question</h2>
       <div class="mb-4">
+        <input type="text" name="username" autocomplete="username" style="display:none"/>
         <label for="createurPassword" class="block text-gray-700 mb-2">Mot de passe :</label>
-        <input type="password" id="createurPassword" v-model="createurPassword" class="w-full p-2 border rounded" required />
+        <input type="password" id="createurPassword" v-model="createurPassword" class="w-full p-2 border rounded" autocomplete="new-password" required />
       </div>
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Se connecter</button>
     </form>
