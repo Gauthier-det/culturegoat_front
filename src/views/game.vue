@@ -16,7 +16,10 @@ const players = ref({});
 const gameOver = ref(false);
 const clickedOption = ref(null);
 const type = ref(null);
-
+const response = ref(null);
+const desc = ref(null);
+const image_link = ref(null);
+const goToDetails = ref(false);
 let timerInterval;
 
 let answered = ref(false);
@@ -37,24 +40,36 @@ onMounted(() => {
 
   // Réception des questions
   socket.on("newQuestion", (q) => {
+    goToDetails.value = false;
     currentQuestion.value = q.question;
     options.value = q.options;
     timeLeft.value = q.time;
     type.value = q.type;
+    response.value = q.response;
+    desc.value = q.desc;
+    image_link.value = q.image_link;
     answered.value = false;
     clickedOption.value = null;
+    //console.log("Nouvelle question reçue :", q);
     startTimer();
   });
 
-  socket.on("updatePlayers", (room) => {
-    players.value = room.players;
+  socket.on("updatePlayers", (players) => {
+    players.value = players;
   });
 
   socket.on("gameOver", (finalPlayers) => {
+    goToDetails.value = false;
     gameOver.value = true;
     players.value = finalPlayers;
     sessionStorage.setItem("isHost", false);
     clearInterval(timerInterval);
+  });
+
+  socket.on("showAnswer", () => {
+    answered.value = true;
+    clearInterval(timerInterval);
+    goToDetails.value = true;
   });
 });
 
@@ -109,9 +124,18 @@ function backToMenu(){
   <div>
     <h1>Partie - Room {{ roomId }}</h1>
 
-    <div v-if="!gameOver">
+    <div v-if="(timeLeft <= 4 && !gameOver) || goToDetails">
+      <h2 v-if="type == 'qcm'">{{ response }}</h2>
+      <h2 v-else>La réponse était : {{ options[0] }}</h2>
+      <p v-if="desc"><em>{{ desc }}</em></p>
+      <div v-if="image_link">
+        <img :src="image_link" alt="Image associée à la question" style="max-width: 300px; max-height: 300px;" />
+      </div>
+    </div>
+
+    <div v-if="(!gameOver && timeLeft > 4) && !goToDetails">
       <h2>{{ currentQuestion }}</h2>
-      <p>Temps restant : {{ timeLeft }}s</p>
+      <p>Temps restant : {{ timeLeft-4 }}s</p>
       <div class="qcmQuest" v-if="type === 'qcm'">
         <div class="game-options">
           <button v-for="opt in options" :key="opt" @click="sendAnswer(opt)" :disabled="answered" :class="{ clicked: clickedOption == opt }">
@@ -127,7 +151,7 @@ function backToMenu(){
       </div>
     </div>
 
-    <div v-else>
+    <div v-if="gameOver && !goToDetails">
       <h2>Fin de la partie 🎉</h2>
       <h3>Scores finaux :</h3>
       <ul>
