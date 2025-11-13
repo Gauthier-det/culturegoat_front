@@ -54,8 +54,8 @@ onMounted(() => {
     startTimer();
   });
 
-  socket.on("updatePlayers", (room) => {
-    players.value = room.players;
+  socket.on("updatePlayers", (players) => {
+    players.value = players;
   });
 
   socket.on("gameOver", (finalPlayers) => {
