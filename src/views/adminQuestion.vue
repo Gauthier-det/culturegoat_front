@@ -8,6 +8,7 @@ const router = useRouter();
 const questions = ref([]);
 const connected = ref(false);
 const adminPassword = ref("");
+const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS
 
 onMounted(() => {
   checkAuth();
@@ -35,8 +36,8 @@ function reject(id) {
 }
 
 function checkAuth(){
-  if(localStorage.getItem("adminValue")){
-    if(localStorage.getItem("adminValue") === "1"){
+  if(sessionStorage.getItem("adminValue")){
+    if(sessionStorage.getItem("adminValue") === "1"){
       connected.value = true;
       return;
     }
@@ -44,8 +45,8 @@ function checkAuth(){
   if(adminPassword.value === ""){
     return;
   }
-  if(adminPassword.value === "Louvre"){
-    localStorage.setItem("adminValue", "1");
+  if(adminPassword.value === ADMIN_PASS){
+    sessionStorage.setItem("adminValue", "1");
     connected.value = true;
   } else {
     alert("Mot de passe incorrect");
@@ -60,8 +61,9 @@ function checkAuth(){
     <form @submit.prevent="checkAuth">
       <h2 class="text-xl font-bold mb-4">🔐 Authentification administrateur</h2>
       <div class="mb-4">
+        <input type="text" name="username" autocomplete="username" style="display:none"/>
         <label for="adminPassword" class="block text-gray-700 mb-2">Mot de passe :</label>
-        <input type="password" id="adminPassword" v-model="adminPassword" class="w-full p-2 border rounded" required />
+        <input type="password" id="adminPassword" v-model="adminPassword" class="w-full p-2 border rounded" autocomplete="new-password" required />
       </div>
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Se connecter</button>
     </form>
