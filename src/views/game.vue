@@ -20,6 +20,7 @@ const response = ref(null);
 const desc = ref(null);
 const image_link = ref(null);
 const goToDetails = ref(false);
+const rematchCountdown = ref(null);
 
 let timerInterval;
 let answered = ref(false);
@@ -77,6 +78,22 @@ onMounted(() => {
     clearInterval(timerInterval);
     goToDetails.value = true;
   });
+
+  // Gestion du rematch
+  socket.on("rematchStarting", (data) => {
+    console.log("Rematch en cours...");
+    gameOver.value = false;
+    goToDetails.value = false;
+    rematchCountdown.value = data.countdown;
+    players.value = data.players;
+    currentQuestion.value = null;
+    clickedOption.value = null;
+    answered.value = false;
+  });
+
+  socket.on("rematchCountdown", (countdown) => {
+    rematchCountdown.value = countdown;
+  });
 });
 
 function sendAnswer(answer) {
@@ -118,13 +135,27 @@ function startTimer(){
 function backToMenu(){
   router.push("/");
 }
+
+function requestRematch(){
+  socket.emit("requestRematch", roomId);
+}
 </script>
 
 <template>
   <div>
     <h1>Partie - Room {{ roomId }}</h1>
     
-    <div v-if="(timeLeft <= 4 && !gameOver) || goToDetails">
+    <!-- Compte à rebours du rematch -->
+    <div v-if="rematchCountdown !== null && rematchCountdown > 0">
+      <h2>🔄 Nouvelle partie dans {{ rematchCountdown }}s...</h2>
+      <p>Préparez-vous !</p>
+      <ul>
+        <li v-for="(p, id) in players" :key="id">{{ p.name }} - Score réinitialisé</li>
+      </ul>
+    </div>
+    
+    <!-- Réponse détaillée -->
+    <div v-else-if="(timeLeft <= 4 && !gameOver) || goToDetails">
       <h2 v-if="type == 'qcm'">{{ response }}</h2>
       <h2 v-else>La réponse était : {{ options[0] }}</h2>
       <p v-if="desc"><em>{{ desc }}</em></p>
@@ -133,7 +164,8 @@ function backToMenu(){
       </div>
     </div>
     
-    <div v-if="(!gameOver && timeLeft > 4) && !goToDetails">
+    <!-- Question en cours -->
+    <div v-else-if="(!gameOver && timeLeft > 4) && !goToDetails">
       <h2>{{ currentQuestion }}</h2>
       <p>Temps restant : {{ timeLeft-4 }}s</p>
       
@@ -167,13 +199,21 @@ function backToMenu(){
       </div>
     </div>
     
-    <div v-if="gameOver && !goToDetails">
+    <!-- Fin de partie -->
+    <div v-else-if="gameOver && !goToDetails && rematchCountdown === null">
       <h2>Fin de la partie 🎉</h2>
       <h3>Scores finaux :</h3>
       <ul>
         <li v-for="(p, id) in players" :key="id">{{ p.name }} - {{ p.score }}</li>
       </ul>
-      <button @click="backToMenu()">Menu</button>
+      <div style="margin-top: 20px;">
+        <button @click="requestRematch()" style="margin-right: 10px; background-color: #4CAF50;">
+          🔄 Rejouer
+        </button>
+        <button @click="backToMenu()">
+          🏠 Menu
+        </button>
+      </div>
     </div>
   </div>
 </template>
