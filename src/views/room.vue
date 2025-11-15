@@ -32,7 +32,7 @@ socket.on("gameAlreadyStarted", () => {
 });
 
 function startGame() {
-  console.log(rules.value);
+  //console.log(rules.value);
   
   if (!rules.value || Object.keys(rules.value).length === 0) {
     rules.value = {
