@@ -19,11 +19,13 @@ const clickedOption = ref(null);
 const type = ref(null);
 const response = ref(null);
 const desc = ref(null);
-const image_link = ref(null);
 const goToDetails = ref(false);
 const rematchCountdown = ref(null);
 const showFeedback = ref(false);
 const isCorrect = ref(false);
+const imageError = ref(false);
+const image_link = ref(null);
+const credit = ref(null);
 
 let timerInterval;
 let answered = ref(false);
@@ -39,6 +41,7 @@ onMounted(() => {
       response.value = data.question.response;
       desc.value = data.question.desc;
       image_link.value = data.question.image_link;
+
     }
     players.value = data.players;
   });
@@ -58,6 +61,8 @@ onMounted(() => {
     clickedOption.value = null;
     showFeedback.value = false;
     isCorrect.value = false;
+    imageError.value = false;
+    credit.value = q.credit;
     startTimer();
   });
   
@@ -94,6 +99,8 @@ onMounted(() => {
     rematchCountdown.value = countdown;
   });
 });
+
+
 
 function sendAnswer(answer) {
   let opt_regex = [];
@@ -184,6 +191,16 @@ function requestRematch(){
       <!-- Question -->
       <div v-else-if="(!gameOver && timeLeft > 4) && !goToDetails" class="question-section">
         <h2>{{ currentQuestion }}</h2>
+        
+        <!-- ✨ IMAGE DE LA QUESTION -->
+        <div v-if="image_link && !imageError" class="question-image">
+          <img 
+            :src="image_link" 
+            alt="Image de la question" 
+            @error="handleImageError"
+          />
+        </div>
+        
         <div class="timer">⏱️ {{ timeLeft-4 }}s</div>
         
         <div class="qcmQuest" v-if="type === 'qcm'">
@@ -499,4 +516,38 @@ function requestRematch(){
     width: 100%;
   }
 }
+
+.question-image {
+  margin: 1.5rem auto;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.question-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+  border: 2px solid var(--border-gold);
+  object-fit: contain;
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .question-image img {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .question-image {
+    margin: 1rem auto;
+  }
+  
+  .question-image img {
+    max-height: 150px;
+  }
+}
+
 </style>

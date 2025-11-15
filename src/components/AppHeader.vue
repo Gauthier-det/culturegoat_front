@@ -4,7 +4,7 @@ import { computed } from 'vue';
 const props = defineProps({
   title: {
     type: String,
-    default: 'GoatyMind'
+    default: 'CultureGoat'
   },
   subtitle: {
     type: String,
