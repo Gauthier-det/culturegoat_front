@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Accueil from "../views/Home.vue";
-import Room from "../views/room.vue";
-import Game from "../views/game.vue";
-import AddQuestion from "../views/addQuestion.vue";
-import AdminQuestion from "../views/adminQuestion.vue";
+import Room from "../views/Room.vue";
+import Game from "../views/Game.vue";
+import AddQuestion from "../views/AddQuestion.vue";
+import AdminQuestion from "../views/AdminQuestion.vue";
 
 const routes = [
     { path: "/", component: Accueil },

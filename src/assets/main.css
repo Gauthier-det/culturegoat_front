@@ -1,169 +1,116 @@
+@import './variables.css';
 @import './base.css';
+@import './components.css';
 
-/* Reset simple */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
-  background: #f5f0f8;
-  color: #333;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem;
-}
-
-#app {
-  max-width: 800px;
-  width: 100%;
-  background: #fff;
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 3rem; /* plus d’espace global entre sections */
-}
+/* ========================================
+   STYLES GLOBAUX
+   ======================================== */
 
 /* Titres */
 h1 {
   font-size: 2rem;
   text-align: center;
-  color: #8e6ca3;
+  color: var(--accent-gold);
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  color: var(--text-white);
   margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.1rem;
+  color: var(--accent-gold);
+  margin-bottom: 1rem;
 }
 
 /* Inputs */
-input {
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border-radius: 12px;
-  border: 2px solid #cfc0e6;
+  border-radius: 25px;
+  border: 2px solid var(--border-gold);
+  background: var(--secondary-bg);
+  color: var(--text-white);
   outline: none;
+  width: 100%;
 }
 
-input:focus {
-  border-color: #a689c9;
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
 }
 
-/* Boutons cartoon doux */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(212, 165, 116, 0.3);
+}
+
+/* Boutons */
 button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.9rem 2rem;
   font-size: 1rem;
   border: none;
-  border-radius: 12px;
-  background: #bda0cb;
-  color: #fff;
+  border-radius: 25px;
+  background: var(--accent-gold);
+  color: var(--primary-bg);
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+  white-space: nowrap;
+  min-height: 48px;
 }
 
 button:hover:not(:disabled) {
+  background: var(--border-gold);
   transform: translateY(-2px);
-  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
-  background: #a689c9;
+  box-shadow: 0 6px 16px rgba(212, 165, 116, 0.4);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 button:disabled {
-  background-color: #d3c2d8;
+  background-color: #5a5a5a;
+  color: #888;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-/* Boutons de réponses “cliqués” */
-
-
-/* Accueil : boutons espacés */
-.home-actions {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; 
-  margin-top: 2rem;
-  align-items: center;
-}
-
-.home-actions button {
-  width: 75%;
-}
-
-.home-actions .join-room {
-  margin-top: 2rem;
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.home-actions .join-room button {
-  width: 50%;
-}
-
-/* Room et Game */
-.room-players,
-.game-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.game-options button {
-  width: 100%;
-  text-align: center;
-  font-size: 1.2rem;
-}
-
-button.clicked {
-  background-color: green !important;
-  color: white !important;
-  border: 2px solid #444;
-}
-
-/* Scores */
-ul {
-  list-style: none;
-  margin-top: 1.5rem;
-  padding-left: 0;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.8rem 0;
-  border-bottom: 1px dashed #d6b8f3;
-  font-weight: bold;
-}
-
-/* Responsive */
-@media (min-width: 600px) {
-  .home-actions {
-    flex-direction: row;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .home-actions .join-room {
-    flex: 1;
-  }
-
-  .game-options button {
-    flex: 1 1 calc(50% - 0.75rem);
+/* Mobile responsive */
+@media (max-width: 768px) {
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.2rem; }
+  button {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
   }
 }
 
-@media (min-width: 900px) {
-  #app {
-    padding: 4rem;
-    gap: 3.5rem;
+@media (max-width: 480px) {
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; }
+  button {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="password"] {
+    font-size: 16px; /* Empêche le zoom sur iOS */
   }
 }

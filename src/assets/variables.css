@@ -1,0 +1,18 @@
+/* ========================================
+   VARIABLES DE COULEURS
+   ======================================== */
+:root {
+  --primary-bg: #1a1a1a;
+  --secondary-bg: #2a2a2a;
+  --accent-gold: #d4a574;
+  --text-white: #ffffff;
+  --text-muted: #b8b8b8;
+  --border-gold: #c29555;
+  --divider-gold: #8b6d3e;
+  
+  /* Feedback colors */
+  --color-success: #4a7c59;
+  --color-success-dark: #3d6a4b;
+  --color-error: #a64d4d;
+  --color-error-dark: #8a3d3d;
+}

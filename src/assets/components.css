@@ -1,0 +1,254 @@
+/* ========================================
+   COMPOSANTS RÉUTILISABLES
+   ======================================== */
+
+/* En-tête global */
+.app-header {
+  background: var(--primary-bg);
+  border-bottom: 2px solid var(--border-gold);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  color: var(--accent-gold);
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+.app-header p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.3rem;
+}
+
+/* Room badge */
+.room-badge {
+  background: var(--accent-gold);
+  color: var(--primary-bg);
+  padding: 0.6rem 1.8rem;
+  border-radius: 25px;
+  font-weight: bold;
+  display: inline-block;
+  margin: 1rem auto;
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+/* Page container */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Auth wrapper */
+.auth-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-form {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 2.5rem;
+  max-width: 450px;
+  width: 100%;
+}
+
+.auth-form h2 {
+  color: var(--accent-gold);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.auth-form label {
+  display: block;
+  color: var(--text-white);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.auth-form input {
+  margin-bottom: 1.5rem;
+}
+
+.auth-form button {
+  width: 100%;
+}
+
+/* Form wrapper */
+.form-wrapper {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 2.5rem;
+  max-width: 700px;
+  width: 100%;
+}
+
+/* Séparateurs */
+.vertical-divider {
+  width: 2px;
+  min-height: 150px;
+  background: linear-gradient(to bottom, transparent, var(--divider-gold), transparent);
+  margin: 0 2rem;
+  flex-shrink: 0;
+}
+
+.horizontal-divider {
+  display: none;
+  height: 2px;
+  width: 80%;
+  background: linear-gradient(to right, transparent, var(--divider-gold), transparent);
+  margin: 2rem auto;
+}
+
+/* Cards */
+.card {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Listes */
+ul {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  width: 100%;
+}
+
+li {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--divider-gold);
+  font-size: 1rem;
+  color: var(--text-white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+/* Boutons spécifiques */
+.btn-validate {
+  background: var(--color-success) !important;
+}
+
+.btn-validate:hover:not(:disabled) {
+  background: var(--color-success-dark) !important;
+}
+
+.btn-delete {
+  background: var(--color-error) !important;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background: var(--color-error-dark) !important;
+}
+
+.btn-rematch {
+  background: var(--color-success) !important;
+}
+
+.btn-rematch:hover:not(:disabled) {
+  background: var(--color-success-dark) !important;
+}
+
+/* Messages */
+.empty-message,
+.loading-message {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .vertical-divider {
+    display: none;
+  }
+  
+  .horizontal-divider {
+    display: block;
+  }
+  
+  .app-header h1 {
+    font-size: 1.6rem;
+  }
+  
+  .content-wrapper {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 1rem;
+  }
+  
+  .app-header h1 {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+  }
+  
+  .app-header p {
+    font-size: 0.8rem;
+  }
+  
+  .content-wrapper {
+    padding: 1rem 0.75rem;
+  }
+  
+  .auth-form,
+  .form-wrapper {
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+  }
+  
+  .room-badge {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+  }
+}
