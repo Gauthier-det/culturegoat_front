@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import socket from "../socket";
 
 const emit = defineEmits(["submit"]);
 const rulesOption = ref("FixedQuestions");
@@ -7,6 +8,26 @@ const scoreMax = ref(5);
 const questionMax = ref(5);
 const qcmTimeLimit = ref(8);
 const openTimeLimit = ref(12);
+const topics = ref([]);
+const selectedTopics = ref([]);
+
+onMounted(() => {
+  socket.emit("getTopicsAndTypes");
+  
+  socket.on("topicsAndTypes", (data) => {
+    topics.value = data.topics; 
+    selectedTopics.value = topics.value.map(t => t.id);
+  });
+});
+
+function toggleTopic(topicId) {
+  const index = selectedTopics.value.indexOf(topicId);
+  if (index > -1) {
+    selectedTopics.value.splice(index, 1);
+  } else {
+    selectedTopics.value.push(topicId);
+  }
+}
 
 function submitRules() {
   if (rulesOption.value == "FixedQuestions") {
@@ -21,7 +42,8 @@ function submitRules() {
     scoreMax: parseInt(scoreMax.value),
     questionMax: parseInt(questionMax.value),
     qcmTimeLimit: parseInt(qcmTimeLimit.value),
-    openTimeLimit: parseInt(openTimeLimit.value)
+    openTimeLimit: parseInt(openTimeLimit.value),
+    selectedTopics: selectedTopics.value
   });
 }
 </script>
@@ -64,6 +86,30 @@ function submitRules() {
         <div>
           <label>Temps pour les questions ouvertes (secondes) :</label>
           <input type="number" v-model="openTimeLimit" min="5" />
+        </div>
+
+        <div class="topics-section">
+          <label>Thèmes souhaités :</label>
+          <div class="topics-list">
+            <div 
+              v-for="topic in topics" 
+              :key="topic.id"
+              class="topic-item"
+            >
+              <label>
+                <input 
+                  type="checkbox" 
+                  :value="topic.id"
+                  :checked="selectedTopics.includes(topic.id)"
+                  @change="toggleTopic(topic.id)"
+                />
+                {{ topic.label }}
+              </label>
+            </div>
+          </div>
+          <p v-if="selectedTopics.length === 0" class="warning">
+            ⚠️ Sélectionnez au moins un thème
+          </p>
         </div>
         <button type="submit">Valider</button>
       </form>
