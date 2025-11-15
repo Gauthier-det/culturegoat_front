@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import socket from "@/socket";
+import { loginAdmin, isAuthenticated, getUserRole } from "@/utils/auth";
 import AppHeader from "@/components/AppHeader.vue";
 
 const router = useRouter();
@@ -9,12 +10,16 @@ const router = useRouter();
 const questions = ref([]);
 const connected = ref(false);
 const adminPassword = ref("");
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
+const authLoading = ref(false);
+const error = ref("");
 
 onMounted(() => {
-  checkAuth();
-  socket.emit("getTempQuestions");
-
+  // Vérifier si déjà authentifié
+  if (isAuthenticated() && getUserRole() === 'admin') {
+    connected.value = true;
+    loadQuestions();
+  }
+  
   socket.on("tempQuestions", (data) => {
     questions.value = data;
   });
@@ -26,7 +31,20 @@ onMounted(() => {
   socket.on("questionDeleted", (id) => {
     questions.value = questions.value.filter(q => q.id !== id);
   });
+  
+  socket.on("error", (message) => {
+    console.error("Socket error:", message);
+    if (message === "Unauthorized") {
+      alert("Session expirée. Veuillez vous reconnecter.");
+      connected.value = false;
+      localStorage.removeItem('auth_token');
+    }
+  });
 });
+
+function loadQuestions() {
+  socket.emit("getTempQuestions");
+}
 
 function accept(id) {
   socket.emit("validateQuestion", id);
@@ -36,21 +54,20 @@ function reject(id) {
   socket.emit("deleteQuestion", id);
 }
 
-function checkAuth(){
-  if(sessionStorage.getItem("adminValue")){
-    if(sessionStorage.getItem("adminValue") === "1"){
-      connected.value = true;
-      return;
-    }
-  }
-  if(adminPassword.value === ""){
-    return;
-  }
-  if(adminPassword.value === ADMIN_PASS){
-    sessionStorage.setItem("adminValue", "1");
+async function checkAuth() {
+  if (!adminPassword.value) return;
+  
+  authLoading.value = true;
+  error.value = "";
+  
+  try {
+    await loginAdmin(adminPassword.value);
     connected.value = true;
-  } else {
-    alert("Mot de passe incorrect");
+    loadQuestions();
+  } catch (err) {
+    error.value = "Mot de passe incorrect";
+  } finally {
+    authLoading.value = false;
   }
 }
 </script>
@@ -70,11 +87,15 @@ function checkAuth(){
             type="password" 
             id="adminPassword" 
             v-model="adminPassword" 
-            autocomplete="new-password" 
+            autocomplete="new-password"
+            :disabled="authLoading"
             required 
           />
         </div>
-        <button type="submit">Se connecter</button>
+        <p v-if="error" class="error-message">{{ error }}</p>
+        <button type="submit" :disabled="authLoading">
+          {{ authLoading ? 'Connexion...' : 'Se connecter' }}
+        </button>
       </form>
     </div>
   </div>
@@ -97,6 +118,7 @@ function checkAuth(){
             <p class="desc" v-if="q.desc">{{ q.desc }}</p>
             <p><strong>Type :</strong> {{ q.type.label }}</p>
             <p><strong>Topic :</strong> {{ q.topic.label }}</p>
+            <p v-if="q.image_link"><strong>Image :</strong> <a :href="q.image_link" target="_blank">Voir</a></p>
 
             <ul v-if="q.options.length > 0" class="options-list">
               <li 
@@ -175,6 +197,11 @@ function checkAuth(){
 
 .question-card p strong {
   color: var(--accent-gold);
+}
+
+.question-card a {
+  color: var(--accent-gold);
+  text-decoration: underline;
 }
 
 .options-list {

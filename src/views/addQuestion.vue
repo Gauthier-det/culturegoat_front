@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import socket from "@/socket";
+import { loginCreator, isAuthenticated, getUserRole } from "@/utils/auth";
 import AppHeader from "@/components/AppHeader.vue";
 
 const router = useRouter();
@@ -19,17 +20,25 @@ const response = ref("");
 const error = ref("");
 const connected = ref(false);
 const createurPassword = ref("");
-const CREATE_PASS = import.meta.env.VITE_CREATE_PASS;
+const authLoading = ref(false);
 
 onMounted(() => {
-  checkAuth();
+  // Vérifier si déjà authentifié
+  if (isAuthenticated() && getUserRole() === 'creator') {
+    connected.value = true;
+  }
+  
+  loadTopicsAndTypes();
+});
+
+function loadTopicsAndTypes() {
   socket.emit("getTopicsAndTypes");
   socket.on("topicsAndTypes", (data) => {
     topics.value = data.topics || [];
     types.value = data.types || [];
     loading.value = false;
   });
-});
+}
 
 watch(selectedType, (newType) => {
   if (!newType) return;
@@ -61,7 +70,9 @@ function removeOption(index) {
   }
 }
 
-function sendQuestion() {
+async function sendQuestion() {
+  error.value = "";
+  
   if (!questionText.value || !selectedType.value || !selectedTopic.value) {
     error.value = "Veuillez remplir tous les champs obligatoires.";
     return;
@@ -112,26 +123,24 @@ function sendQuestion() {
       response.value = "";
       error.value = "";
     } else {
-      alert("Erreur lors de l'ajout de la question.");
+      error.value = res.error || "Erreur lors de l'ajout de la question.";
     }
   });
 }
 
-function checkAuth(){
-  if(sessionStorage.getItem("creaValue")){
-    if(sessionStorage.getItem("creaValue") === "1"){
-      connected.value = true;
-      return;
-    }
-  }
-  if(createurPassword.value === ""){
-    return;
-  }
-  if(createurPassword.value === CREATE_PASS){
-    sessionStorage.setItem("creaValue", "1");
+async function checkAuth() {
+  if (!createurPassword.value) return;
+  
+  authLoading.value = true;
+  error.value = "";
+  
+  try {
+    await loginCreator(createurPassword.value);
     connected.value = true;
-  } else {
-    alert("Mot de passe incorrect");
+  } catch (err) {
+    error.value = "Mot de passe incorrect";
+  } finally {
+    authLoading.value = false;
   }
 }
 </script>
@@ -152,10 +161,14 @@ function checkAuth(){
             id="createurPassword" 
             v-model="createurPassword" 
             autocomplete="new-password" 
+            :disabled="authLoading"
             required 
           />
         </div>
-        <button type="submit">Se connecter</button>
+        <p v-if="error" class="error-message">{{ error }}</p>
+        <button type="submit" :disabled="authLoading">
+          {{ authLoading ? 'Connexion...' : 'Se connecter' }}
+        </button>
       </form>
     </div>
   </div>
