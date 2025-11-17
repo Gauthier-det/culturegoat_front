@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "serve dist"
+    "build:prod": "./scripts/build-prod.sh",
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
