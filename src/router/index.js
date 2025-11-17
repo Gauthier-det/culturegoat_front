@@ -5,6 +5,7 @@ import Game from "../views/Game.vue";
 import AddQuestion from "../views/AddQuestion.vue";
 import AdminQuestion from "../views/AdminQuestion.vue";
 import WIP from "../views/WIP.vue";
+import NotFound from "../views/NotFound.vue";
 
 const routes = [
     { path: "/", component: Home },
@@ -12,7 +13,12 @@ const routes = [
     { path: "/game/:roomId", component: Game },
     { path: "/add-question", component: AddQuestion },
     { path: "/admin-question", component: AdminQuestion },
-    { path: "/wip", component: WIP }
+    { path: "/wip", component: WIP },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: NotFound
+    }
 ];
 
 const router = createRouter({
