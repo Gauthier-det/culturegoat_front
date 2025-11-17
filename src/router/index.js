@@ -7,11 +7,12 @@ import AdminQuestion from "../views/AdminQuestion.vue";
 import WIP from "../views/WIP.vue";
 
 const routes = [
-    { path: "/", component: WIP },
+    { path: "/", component: Home },
     { path: "/room/:roomId", component: Room },
     { path: "/game/:roomId", component: Game },
     { path: "/add-question", component: AddQuestion },
-    { path: "/admin-question", component: AdminQuestion }
+    { path: "/admin-question", component: AdminQuestion },
+    { path: "/wip", component: WIP }
 ];
 
 const router = createRouter({
