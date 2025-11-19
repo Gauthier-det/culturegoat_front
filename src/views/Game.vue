@@ -25,6 +25,7 @@ const showFeedback = ref(false);
 const isCorrect = ref(false);
 const imageError = ref(false);
 const image_link = ref(null);
+const image_credit = ref(null);
 const credit = ref(null);
 
 let timerInterval;
@@ -41,6 +42,7 @@ onMounted(() => {
       response.value = data.question.response;
       desc.value = data.question.desc;
       image_link.value = data.question.image_link;
+      image_credit.value = data.question.image_credit;
 
     }
     players.value = data.players;
@@ -57,6 +59,7 @@ onMounted(() => {
     response.value = q.response;
     desc.value = q.desc;
     image_link.value = q.image_link;
+    image_credit.value = q.image_credit
     answered.value = false;
     clickedOption.value = null;
     showFeedback.value = false;
@@ -186,6 +189,7 @@ function requestRematch(){
         <h2 v-else>La réponse était : {{ options[0] }}</h2>
         <p v-if="desc"><em>{{ desc }}</em></p>
         <img v-if="image_link" :src="image_link" alt="Image" />
+        <p v-if="image_credit">{{ image_credit }}</p> 
       </div>
       
       <!-- Question -->
@@ -196,7 +200,7 @@ function requestRematch(){
         <div v-if="image_link && !imageError" class="question-image">
           <img 
             :src="image_link" 
-            alt="Image de la question" 
+            :alt="image_credit" 
             @error="handleImageError"
           />
         </div>

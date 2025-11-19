@@ -15,6 +15,7 @@ const selectedType = ref("");
 const questionText = ref("");
 const desc = ref("");
 const imageLink = ref("");
+const imageCredit = ref("");
 const options = ref(["", "", "", ""]); 
 const response = ref("");
 const error = ref("");
@@ -109,6 +110,7 @@ async function sendQuestion() {
     topic: selectedTopic.value,
     type: selectedType.value,
     image_link: imageLink.value || null,
+    image_credit: imageCredit.value || null
   };
 
   socket.emit("addQuestion", questionData, (res) => {
@@ -119,6 +121,7 @@ async function sendQuestion() {
       questionText.value = "";
       desc.value = "";
       imageLink.value = "";
+      imageCredit.value = "";
       options.value = ["", "", "", ""];
       response.value = "";
       error.value = "";
@@ -199,6 +202,11 @@ async function checkAuth() {
           <div class="form-group">
             <label>Lien image (facultatif) :</label>
             <input v-model="imageLink" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label>Crédit de l'image (ou lien vers la page où l'image a été trouvée) (facultatif) :</label>
+            <input v-model="imageCredit" type="text" />
           </div>
 
           <div class="form-group">
